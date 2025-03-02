@@ -1,62 +1,44 @@
 const { Telegraf } = require('telegraf');
-
 require('dotenv').config();
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
-//comandos basicos
+
+
+// Comandos básicos
 bot.start((ctx) => {
-    ctx.reply('Bienvenido a KiraBot');
-})
+  ctx.reply('Bienvenido a KiraBot');
+});
 
 bot.help((ctx) => {
-    ctx.reply('Espera estoy en construccion');
-})
+  ctx.reply('mejor utiliza el comando /ayuda que con este se activan todos los bots');
+});
 
 bot.settings((ctx) => {
-    ctx.reply('¡¡Caguen la mare que ta parit,tin pasiensia que estic en construcció!!');
-})
+  ctx.reply('¡¡Caguen la mare que ta parit,tin pasiensia que estic en construcció!!');
+});
 
-//comandos personalizados
+// Importar comandos personalizados
+const saludo = require('./commands/saludo');
+const foto = require('./commands/foto');
+const audio = require('./commands/audio');
+const ayuda = require('./commands/ayuda');
+const cagar = require('./commands/cagar');
+const listeners = require('./commands/listeners');
+const clima = require('./commands/clima');
+const menu = require('./commands/menu'); // Añadir el menú
 
-bot.command( ['saludo', 'saludar'], (ctx) => {
-    console.log(ctx)
-    ctx.reply('Hola, soy KiraBot, en que puedo ayudarte?')
-})
+// Registrar los comandos
+saludo(bot);
+foto(bot);
+audio(bot);
+ayuda(bot);
+cagar(bot);
+listeners(bot);
+clima(bot);
+menu(bot);
 
-bot.command( ['cagar', 'pisar'], (ctx) => {
-    
-    ctx.reply('disa de dir coxinaes,¡¡marrano¡¡')
-})
-
-//comando personal para pedir fotos
-
-bot.command('foto', (ctx) => {
-    ctx.replyWithPhoto({ source: 'robot.jpg' })
-})
-
-//vamos a probar con audio
-
-bot.command('audio', (ctx) => {
-    ctx.replyWithAudio({ source: 'elmio.ogg' })
-})
-
-//comando de escucha
-
-bot.hears('computadora', (ctx) => {
-    ctx.reply('yeeee ¡¡figura!! yo soy una maquina tambien');
-})
-
-//comando de escucha para cualquier texto
-
-//bot.on('text', (ctx) => {
- //   ctx.reply('yeeee estas parlan masa');
-//})
-
-//comando escucha para los stickers
-
-bot.on('sticker', (ctx) => {
-    ctx.reply('¡¡Que guay,!! mira quins ninots mes chulos');
-})
-
+// Iniciar el bot
 bot.launch();
+
+console.log('KiraBot está en marcha!');
