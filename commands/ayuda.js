@@ -12,6 +12,7 @@ module.exports = (bot) => {
   /foto
   /audio
   /clima
+  /gato
   /menu`);
     });
   };
