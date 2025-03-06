@@ -1,4 +1,4 @@
-module.exports = (bot) => {
+/*module.exports = (bot) => {
     const games = new Map(); // Almacenar el estado del juego por usuario
   
     bot.command('adivina', (ctx) => {
@@ -29,4 +29,4 @@ module.exports = (bot) => {
         ctx.reply('Demasiado alto. ¡Intentalo de nuevo!');
       }
     });
-  };
+  };*/
