@@ -5,28 +5,23 @@ module.exports = (bot) => {
   const triviaGames = new Map();
   const adivinaGames = new Map();
 
-  // Categorías disponibles
-  const categories = {
-    'general': 9,    // Conocimiento general
-    'cine': 11,      // Cine
-    'musica': 12,    // Música
-    'ciencia': 17,   // Ciencia y naturaleza
-    'historia': 23,  // Historia
-    'geografia': 22, // Geografía
-    'deportes': 21   // Deportes
+  const backsideCategories = {
+    'general': 9,
+    'cine': 11,
+    'musica': 12,
+    'ciencia': 17,
+    'historia': 23,
+    'geografia': 22,
+    'deportes': 21
   };
 
-  // Comando /trivia
-  bot.command('trivia', async (ctx) => {
+  // Función auxiliar para enviar una pregunta de trivia
+  const sendTriviaQuestion = async (ctx, categoryId, categoryName = '') => {
     const userId = ctx.from.id;
-    console.log('Comando /trivia recibido:', ctx.message.text);
-
-    const args = ctx.message.text.split(' ').slice(1);
-    const categoryInput = args[0]?.toLowerCase();
-    const categoryId = categories[categoryInput] || 9; // Por defecto: Conocimiento general
+    console.log('Solicitando pregunta para categoría:', categoryName || 'general');
 
     try {
-      console.log('Solicitando pregunta a Open Trivia DB...', { category: categoryInput || 'general' });
+      console.log('Solicitando pregunta a Open Trivia DB...');
       const response = await axios.get('https://opentdb.com/api.php', {
         params: {
           amount: 1,
@@ -38,7 +33,6 @@ module.exports = (bot) => {
 
       const questionData = response.data.results[0];
 
-      // Traducir pregunta y respuestas al español
       const questionEn = questionData.question;
       const correctAnswerEn = questionData.correct_answer;
       const incorrectAnswersEn = questionData.incorrect_answers;
@@ -61,19 +55,56 @@ module.exports = (bot) => {
 
       const optionsText = shuffledAnswers.map((answer, index) => `${index + 1}. ${answer}`).join('\n');
       console.log('Enviando pregunta traducida:', translatedQuestion.text);
-      ctx.reply(`Aquí tienes tu pregunta de trivia${categoryInput ? ` sobre ${categoryInput}` : ''}:\n\n${translatedQuestion.text}\n\nOpciones:\n${optionsText}\n\nResponde con el número de la opción correcta (1-4).`);
+      await ctx.reply(`Aquí tienes tu pregunta de trivia${categoryName ? ` sobre ${categoryName}` : ''}:\n\n${translatedQuestion.text}\n\nOpciones:\n${optionsText}\n\nResponde con el número de la opción correcta (1-4).`);
     } catch (error) {
-      console.error('Error en /trivia:', error.message);
+      console.error('Error en trivia:', error.message);
       if (error.response) {
         console.error('Detalles:', error.response.data);
         console.error('Código:', error.response.status);
       }
-      ctx.reply('¡Ups! No pude obtener o traducir una pregunta de trivia. Intenta de nuevo.');
+      await ctx.reply('¡Ups! No pude obtener o traducir una pregunta de trivia. Intenta de nuevo.');
     }
+  };
+
+  // Comando /trivia
+  bot.command('trivia', async (ctx) => {
+    const args = ctx.message.text.split(' ').slice(1);
+    const categoryInput = args[0]?.toLowerCase();
+    const categoryId = backsideCategories[categoryInput] || 9;
+    const categoryName = categoryInput || 'general';
+    await sendTriviaQuestion(ctx, categoryId, categoryName);
+  });
+
+  // Manejadores de botones inline
+  bot.action('trivia_cine', async (ctx) => {
+    await sendTriviaQuestion(ctx, 11, 'cine');
+  });
+
+  bot.action('trivia_ciencia', async (ctx) => {
+    await sendTriviaQuestion(ctx, 17, 'ciencia');
+  });
+
+  bot.action('trivia_historia', async (ctx) => {
+    await sendTriviaQuestion(ctx, 23, 'historia');
+  });
+
+  bot.action('trivia_musica', async (ctx) => {
+    await sendTriviaQuestion(ctx, 12, 'música');
+  });
+
+  bot.action('trivia_geografia', async (ctx) => {
+    await sendTriviaQuestion(ctx, 22, 'geografía');
+  });
+
+  bot.action('trivia_deportes', async (ctx) => {
+    await sendTriviaQuestion(ctx, 21, 'deportes');
+  });
+
+  bot.action('trivia_general', async (ctx) => {
+    await sendTriviaQuestion(ctx, 9, 'general');
   });
 
   // Comando /adivina
-  
   bot.command('adivina', (ctx) => {
     const userId = ctx.from.id;
     const number = Math.floor(Math.random() * 100) + 1;
@@ -88,10 +119,8 @@ module.exports = (bot) => {
     const triviaGame = triviaGames.get(userId);
     const adivinaGame = adivinaGames.get(userId);
 
-    // Ignorar mensajes si no hay juego activo para este usuario
     if (!triviaGame && !adivinaGame) return;
 
-    // En un grupo, solo procesar si el mensaje es una respuesta al bot o está en el chat original del juego
     if (ctx.chat.type === 'group' || ctx.chat.type === 'supergroup') {
       const isReplyToBot = ctx.message.reply_to_message && ctx.message.reply_to_message.from.id === ctx.botInfo.id;
       const isOriginalChat = (triviaGame && triviaGame.chatId === chatId) || (adivinaGame && adivinaGame.chatId === chatId);
@@ -106,7 +135,6 @@ module.exports = (bot) => {
       return;
     }
 
-    // Priorizar trivia si hay un juego activo
     if (triviaGame) {
       if (guess < 1 || guess > 4) {
         ctx.reply('Por favor, responde con un número entre 1 y 4.');
@@ -122,7 +150,6 @@ module.exports = (bot) => {
       return;
     }
 
-    // Juego de adivinar si no hay trivia
     if (adivinaGame) {
       adivinaGame.attempts += 1;
       if (guess === adivinaGame.number) {

@@ -44,7 +44,7 @@ module.exports = (bot) => {
           ],
           [
             { text: '🎲 Adivina', callback_data: 'adivina' },
-            { text: '❔ Trivia', callback_data: 'trivia' } // Nuevo botón
+            { text: '❔ Trivia', callback_data: 'trivia' }
           ],
           [
             { text: '⬅️ Volver', callback_data: 'volver' }
@@ -149,6 +149,26 @@ module.exports = (bot) => {
   });
 
   bot.action('trivia', (ctx) => {
-    ctx.reply('Escribe /trivia para jugar una pregunta de opción múltiple ❓ (ej: /trivia cine, /trivia ciencia, /trivia historia, /trivia musica, /trivia geografia, /trivia deportes, /trivia general)');
+    ctx.reply('Elige una categoría para tu trivia:', {
+      reply_markup: {
+        inline_keyboard: [
+          [
+            { text: 'Cine', callback_data: 'trivia_cine' },
+            { text: 'Ciencia', callback_data: 'trivia_ciencia' }
+          ],
+          [
+            { text: 'Historia', callback_data: 'trivia_historia' },
+            { text: 'Música', callback_data: 'trivia_musica' }
+          ],
+          [
+            { text: 'Geografía', callback_data: 'trivia_geografia' },
+            { text: 'Deportes', callback_data: 'trivia_deportes' }
+          ],
+          [
+            { text: 'General', callback_data: 'trivia_general' }
+          ]
+        ]
+      }
+    });
   });
 };
