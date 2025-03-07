@@ -4,8 +4,16 @@ require('dotenv').config();
 try {
   const bot = new Telegraf(process.env.BOT_TOKEN);
 
-  bot.start((ctx) => {
-    ctx.reply('Bienvenido a KiraBot 🤖, soy un bot creado por @JoseCervereta Pincha en /menu y accede a todo el contenido');
+  bot.start(async (ctx) => {
+    try {
+      await ctx.reply('Bienvenido a KiraBot 🤖, soy un bot creado por @JoseCervereta Pincha en /menu y accede a todo el contenido');
+    } catch (error) {
+      if (error.response && error.response.error_code === 403) {
+        console.log(`No puedo enviar mensaje a ${ctx.from.id}: bot bloqueado por el usuario`);
+      } else {
+        console.error('Error en /start:', error);
+      }
+    }
   });
 
   bot.help((ctx) => {
