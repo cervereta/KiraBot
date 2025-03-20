@@ -21,7 +21,7 @@ try {
   });
 
   bot.settings((ctx) => {
-    ctx.reply('¡¡Caguen la mare que ta parit, ten paciencia que estoy en Construcción!!');
+    ctx.reply('No tengo ajustes que puedas configurar,soy un Bot para el entretimiento');
   });
 
   const saludo = require('./commands/saludo');

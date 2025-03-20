@@ -4,7 +4,7 @@ module.exports = (bot) => {
   bot.command('menu', (ctx) => {
     const userName = ctx.from.first_name || 'amigo';
     ctx.reply(`*¡Hola ${userName}!* ¿Qué quieres hacer?
-      Ten en cuenta que aun estoy en fase Pruebas`, {
+      Estoy aqui para entretenerte,utiliza las multiples opciones a traves de los botones`, {
       parse_mode: 'Markdown',
       reply_markup: {
         inline_keyboard: [
@@ -57,7 +57,7 @@ module.exports = (bot) => {
   bot.action('volver', (ctx) => {
     const userName = ctx.from.first_name || 'amigo';
     ctx.editMessageText(`*¡Hola ${userName}!* ¿Qué quieres hacer?
-      Ten en cuenta que aun estoy en fase Pruebas`, {
+      Estoy aqui para entretenerte,utiliza las multiples opciones a traves de los botones`, {
       parse_mode: 'Markdown',
       reply_markup: {
         inline_keyboard: [
