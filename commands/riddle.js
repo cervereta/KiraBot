@@ -44,12 +44,15 @@ module.exports = (bot) => {
 
   // /riddles: Starts the riddle game in a group
   bot.command('riddles', async (ctx) => {
-    try {
-      const chatId = ctx.chat.id;
-      if (ctx.chat.type !== 'group' && ctx.chat.type !== 'supergroup') {
-        await ctx.reply('Este comando solo funciona en grupos. Añádeme a un grupo y usa /riddles.');
-        return;
-      }
+  try {
+    console.log('Comando /riddles recibido en chat:', ctx.chat.id, 'tipo:', ctx.chat.type);
+    const chatId = ctx.chat.id;
+    if (ctx.chat.type !== 'group' && ctx.chat.type !== 'supergroup') {
+      console.log('Comando /riddles usado fuera de un grupo');
+      await ctx.reply('Este comando solo funciona en grupos. Añádeme a un grupo y usa /riddles.');
+      return;
+    }
+    // Resto del código sin cambios
 
       if (riddleInterval) {
         await ctx.reply('El juego de acertijos ya está activo en este grupo. Usa /stopriddles para pararlo.');

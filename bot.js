@@ -64,3 +64,11 @@ try {
   console.error('Error al iniciar KiraBot:', error);
   process.exit(1);
 }
+
+bot.catch((err, ctx) => {
+  console.error('Error en Telegraf:', err);
+  if (err.code === 'ECONNRESET' || err.error_code === 409) {
+    console.log('Reintentando conexión en 5 segundos...');
+    setTimeout(() => bot.launch().catch(() => {}), 5000);
+  }
+});
