@@ -36,6 +36,7 @@ try {
   const perro = require('./commands/perro');
   const frase = require('./commands/frase');
   const trivia = require('./commands/trivia');
+  const riddle = require('./commands/riddle'); // Nuevo módulo
 
   saludo(bot);
   foto(bot);
@@ -49,6 +50,7 @@ try {
   perro(bot);
   frase(bot);
   trivia(bot);
+  riddle(bot);
 
   bot.launch();
   console.log('KiraBot está en marcha!');
