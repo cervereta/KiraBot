@@ -4,25 +4,27 @@ require('dotenv').config();
 try {
   const bot = new Telegraf(process.env.BOT_TOKEN);
 
+  // Manejador de errores global
+  bot.catch((err, ctx) => {
+    console.error('Error en Telegraf:', err);
+    if (err.code === 'ECONNRESET' || err.error_code === 409) {
+      console.log('Reintentando conexión en 5 segundos...');
+      setTimeout(() => bot.launch().catch(() => {}), 5000);
+    }
+  });
+
+  console.log('Registrando comandos...'); // Depuración
+
   bot.start(async (ctx) => {
     try {
       await ctx.reply('Bienvenido a KiraBot 🤖, soy un bot creado por @JoseCervereta Pincha en /menu y accede a todo el contenido');
     } catch (error) {
-      if (error.response && error.response.error_code === 403) {
-        console.log(`No puedo enviar mensaje a ${ctx.from.id}: bot bloqueado por el usuario`);
-      } else {
-        console.error('Error en /start:', error);
-      }
+      console.error('Error en /start:', error);
     }
   });
 
-  bot.help((ctx) => {
-    ctx.reply('Mejor utiliza el comando /ayuda');
-  });
-
-  bot.settings((ctx) => {
-    ctx.reply('No tengo ajustes que puedas configurar,soy un Bot para el entretimiento');
-  });
+  bot.help((ctx) => ctx.reply('Mejor utiliza el comando /ayuda'));
+  bot.settings((ctx) => ctx.reply('¡¡Caguen la mare que ta parit, ten paciencia que estoy en Construcción!!'));
 
   const saludo = require('./commands/saludo');
   const foto = require('./commands/foto');
@@ -36,7 +38,7 @@ try {
   const perro = require('./commands/perro');
   const frase = require('./commands/frase');
   const trivia = require('./commands/trivia');
-  const riddle = require('./commands/riddle'); // Nuevo módulo
+  const riddle = require('./commands/riddle');
 
   saludo(bot);
   foto(bot);
@@ -65,3 +67,4 @@ try {
   process.exit(1);
 }
 
+// esperemos que esta sea la definitiva
