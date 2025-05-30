@@ -1,7 +1,10 @@
 const axios = require('axios');
 const translate = require('@iamtraction/google-translate');
 
+console.log('Cargando módulo riddle.js...');
+
 module.exports = (bot) => {
+  // Resto del código
   let riddleInterval = null; // Timer for periodic riddles
   let currentRiddle = null; // Current riddle: { riddle: "...", answer: "..." }
   let riddleChatId = null; // Chat ID where the game is active
@@ -12,13 +15,16 @@ module.exports = (bot) => {
    * @returns {Promise<boolean>} True if successful, false if failed.
    */
   const sendRiddle = async (chatId) => {
-    currentRiddle = null; // Reset riddle
-    try {
-      console.log('Solicitando acertijo de API Ninjas...');
-      const response = await axios.get('https://api.api-ninjas.com/v1/riddles', {
-        headers: { 'X-Api-Key': process.env.RIDDLES_API_KEY }
-      });
-      const { question: riddleEn, answer: answerEn, title } = response.data[0];
+  currentRiddle = null;
+  try {
+    console.log('Iniciando sendRiddle para chat:', chatId);
+    console.log('Solicitando acertijo de API Ninjas con key:', process.env.RIDDLES_API_KEY ? 'Configurada' : 'No configurada');
+    const response = await axios.get('https://api.api-ninjas.com/v1/riddles', {
+      headers: { 'X-Api-Key': process.env.RIDDLES_API_KEY }
+    });
+    console.log('Respuesta de API Ninjas:', response.data);
+    const { question: riddleEn, answer: answerEn } = response.data[0];
+    // Resto del código
 
       console.log('Acertijo recibido:', riddleEn);
       const translatedRiddle = await translate(riddleEn, { to: 'es' });
@@ -45,13 +51,16 @@ module.exports = (bot) => {
   // /riddles: Starts the riddle game in a group
   bot.command('riddles', async (ctx) => {
   try {
-    console.log('Comando /riddles recibido en chat:', ctx.chat.id, 'tipo:', ctx.chat.type);
+    console.log('Comando /riddles recibido - Chat ID:', ctx.chat.id, 'Tipo:', ctx.chat.type, 'Usuario:', ctx.from.username || ctx.from.first_name);
     const chatId = ctx.chat.id;
+    console.log('Verificando tipo de chat...');
     if (ctx.chat.type !== 'group' && ctx.chat.type !== 'supergroup') {
       console.log('Comando /riddles usado fuera de un grupo');
       await ctx.reply('Este comando solo funciona en grupos. Añádeme a un grupo y usa /riddles.');
       return;
     }
+    console.log('Verificando si el juego está activo...');
+    // Resto del código
     // Resto del código sin cambios
 
       if (riddleInterval) {
