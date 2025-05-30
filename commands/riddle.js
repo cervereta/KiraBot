@@ -18,7 +18,7 @@ module.exports = (bot) => {
       const response = await axios.get('https://api.api-ninjas.com/v1/riddles', {
         headers: { 'X-Api-Key': process.env.RIDDLES_API_KEY }
       });
-      const { question: riddleEn, answer: answerEn } = response.data[0];
+      const { question: riddleEn, answer: answerEn, title } = response.data[0];
 
       console.log('Acertijo recibido:', riddleEn);
       const translatedRiddle = await translate(riddleEn, { to: 'es' });
